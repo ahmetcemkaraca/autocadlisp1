@@ -1,8 +1,6 @@
 ---
-applyTo: "**/*"
-description: Project-wide policy for Cursor. Language/output, branching, documentation, and safety rules.
+alwaysApply: true
 ---
-
 ## Language & Output Policy
 
 - Code identifiers: English

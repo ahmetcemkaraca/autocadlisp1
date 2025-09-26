@@ -81,3 +81,19 @@
 - Tolerans ayarlama kolaylığı
 - Büyük dosyalar için uyarı sistemi
 - Session boyunca ayar hatırlama
+
+## v1.2.0 - 2D Polyline Basitleştirme (Douglas–Peucker)
+**Tarih:** 2025-09-26 15:05:00
+
+### Yeni Özellikler
+- `SIMPLIFYPL` komutu: 2D LWPOLYLINE vertex sayısını tolerans ile azaltır
+- `SETSIMP` komutu: Global `*SIMPLIFY-TOL*` toleransını ayarlar
+
+### Teknik Ayrıntılar
+- Douglas–Peucker özyinelemeli algoritma
+- Kapalı polyline desteği; kapanış özelliğini korur
+- Referans polyline özelliklerinin yeni nesneye aktarımı
+
+### Dokümantasyon
+- `docs/lisp/polyline-simplify.md` kullanım kılavuzu
+- `README.md` güncellendi

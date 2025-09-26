@@ -7,6 +7,19 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanmak
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-09-26
+
+### Added
+- SIMPLIFYPL: 2D LWPOLYLINE vertex azaltma (Douglas–Peucker tabanlı)
+- SETSIMP: Basitleştirme toleransı ayarı (global `*SIMPLIFY-TOL*`)
+- Dokümantasyon: `docs/lisp/polyline-simplify.md`
+- README: kullanım bölümü ve proje yapısına yeni dosyalar eklendi
+
+### Technical
+- Referans özellik aktarımı (layer, color, linetype, lineweight)
+- Kapalı polyline'larda closure korunarak sadeleştirme
+- Performans için özyinelemeli DP uygulaması
+
 ## [1.0.1] - 2025-09-26
 
 ### Added

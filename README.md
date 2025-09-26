@@ -9,16 +9,19 @@ AutoCAD'de mevcut polyline çizgilerini curved (eğri) çizgiler haline getiren 
 - **FITCURVE**: Polyline'ları fit curve (uygun eğri) yapar
 - **JOINPL**: İki polyline'ı uç uca birleştirir
 - **AUTOJOINPL**: Seçilen polyline'lar arasında uç uca gelenleri otomatik birleştirir
+- **SIMPLIFYPL**: 2D LWPOLYLINE vertex sayısını tolerans ile azaltır
 
 ## 🚀 Hızlı Başlangıç
 
-1. `src/lisp/polyline-to-curve.lsp` dosyasını AutoCAD'e yükleyin
-2. Komut satırında `PL2CURVE` yazın
-3. Dönüştürmek istediğiniz polyline'ları seçin
+1. `src/lisp/polyline-to-curve.lsp` ve `src/lisp/polyline-simplify.lsp` dosyalarını AutoCAD'e yükleyin
+2. Komut satırında `PL2CURVE` (dönüştürme) veya `SIMPLIFYPL` (basitleştirme) yazın
+3. İlgili işlemler için polyline'ları seçin
 
 ## 📚 Dokümantasyon
 
-Detaylı kullanım kılavuzu: [docs/lisp/polyline-to-curve.md](docs/lisp/polyline-to-curve.md)
+Detaylı kullanım kılavuzları:
+- [docs/lisp/polyline-to-curve.md](docs/lisp/polyline-to-curve.md)
+- [docs/lisp/polyline-simplify.md](docs/lisp/polyline-simplify.md)
 
 ## 💻 Kullanım Örnekleri
 
@@ -56,9 +59,11 @@ Toplam 3 polyline çifti birleştirildi.
 
 ```
 ├── src/lisp/                  # LISP kaynak kodları
-│   └── polyline-to-curve.lsp  # Ana LISP dosyası
+│   ├── polyline-to-curve.lsp    # Eğri/spline dönüşüm araçları
+│   └── polyline-simplify.lsp    # Vertex azaltma (Douglas–Peucker)
 ├── docs/lisp/                 # LISP dokümantasyonları  
-│   └── polyline-to-curve.md   # Detaylı kullanım kılavuzu
+│   ├── polyline-to-curve.md     # Detaylı kullanım kılavuzu
+│   └── polyline-simplify.md     # Basitleştirme kılavuzu
 └── docs/registry/             # Proje kayıt sistemi
     └── identifiers.json       # Modül tanımları
 ```
