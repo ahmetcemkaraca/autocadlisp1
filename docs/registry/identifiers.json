@@ -1,0 +1,31 @@
+{
+  "modules": [
+    {
+      "name": "polyline-to-curve.lsp",
+      "path": "src/lisp/polyline-to-curve.lsp",
+      "type": "AutoCAD LISP",
+      "exports": [
+        "c:pl2curve",
+        "c:smoothpl", 
+        "c:fitcurve",
+        "c:joinpl",
+        "c:autojoinpl",
+        "c:settol"
+      ],
+      "functions": [
+        "get-polyline-points",
+        "get-polyline-bulges",
+        "create-curved-polyline",
+        "calculate-arc-points",
+        "calculate-arc-center",
+        "create-joined-polyline",
+        "join-two-polylines"
+      ],
+      "variables": [
+        "*JOIN-TOLERANCE*"
+      ],
+      "description": "Polyline çizgilerini curved (eğri) çizgiler haline getiren ve polyline'ları birleştiren LISP fonksiyonları"
+    }
+  ]
+}
+

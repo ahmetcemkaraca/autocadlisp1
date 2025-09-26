@@ -1,0 +1,83 @@
+# Version History
+
+## v1.0.0 - AutoCAD LISP Polyline to Curve Dönüştürücü
+**Tarih:** 2025-09-26 14:09:49
+
+### Yeni Özellikler
+- AutoCAD LISP polyline-to-curve.lsp modülü oluşturuldu
+- PL2CURVE komutu: Polyline'ları spline eğrilerine dönüştürür
+- SMOOTHPL komutu: Polyline'ları smooth yapar
+- FITCURVE komutu: Polyline'ları fit curve yapar
+- Kapsamlı hata yönetimi ve kullanıcı geri bildirimi
+- LWPOLYLINE ve POLYLINE türleri için destek
+- Bulge değeri olan polyline'lar için arc hesaplama algoritması
+
+### Teknik Özellikler
+- DXF kod analizi ile polyline geometrisi okuma
+- Spline interpolasyon ve arc hesaplama fonksiyonları
+- Türkçe kullanıcı mesajları ve dokümantasyon
+- Registry ve context yönetimi entegrasyonu
+
+### Dokümantasyon
+- Detaylı kullanım kılavuzu (docs/lisp/polyline-to-curve.md)
+- Kod yapısı ve fonksiyon referansları
+- Kurulum ve yapılandırma rehberi
+- Hata giderme ve performans notları
+
+## v1.1.0 - Polyline Birleştirme Özelliği Eklendi
+**Tarih:** 2025-09-26 14:22:10
+
+### Yeni Özellikler
+- **JOINPL komutu**: İki polyline'ı manuel uç uca birleştirme
+- **AUTOJOINPL komutu**: Seçilen polyline'lar arasında otomatik birleştirme
+- Akıllı uç nokta algılama sistemi (0.001 birim tolerans)
+- Otomatik polyline yön belirleme ve ters çevirme
+- Layer ve renk özelliklerini koruma
+
+### Teknik İyileştirmeler
+- `create-joined-polyline` - Birleştirilmiş polyline oluşturma fonksiyonu
+- `join-two-polylines` - İki polyline birleştirme algoritması
+- Dört farklı birleştirme senaryosu desteği:
+  - end1->start2 (doğrudan birleştirme)
+  - end1->end2 (ikinci polyline ters çevrilir)
+  - start1->start2 (ilk polyline ters çevrilir)
+  - start1->end2 (polyline sırası değişir)
+
+### Kullanım Senaryoları
+- Kesik çizgilerin birleştirilmesi
+- Karmaşık çizimlerde polyline temizleme
+- Toplu polyline birleştirme işlemleri
+- CAD dosya optimizasyonu
+
+### Dokümantasyon Güncellemeleri
+- JOINPL ve AUTOJOINPL komutları için detaylı kullanım örnekleri
+- Birleştirme algoritması açıklamaları
+- Hata senaryoları ve çözümleri
+- Performans optimizasyon önerileri
+
+## v1.1.1 - Hata Düzeltmeleri ve İyileştirmeler
+**Tarih:** 2025-09-26 14:38:09
+
+### Hata Düzeltmeleri
+- **Renk hatası**: AutoCAD'de geçersiz renk numarası hatası düzeltildi
+- **Entity modification**: COMMAND yerine ENTMOD kullanılarak daha güvenli özellik ayarlama
+- **Tolerans kontrolü**: Geçersiz renk değerleri için otomatik düzeltme
+- **BYLAYER renk**: Renk 256 için özel işlem eklendi
+
+### Yeni Özellikler
+- **SETTOL komutu**: Birleştirme toleransını kullanıcı ayarlayabilir
+- **Global tolerans**: `*JOIN-TOLERANCE*` değişkeni ile tolerans hatırlama
+- **Performans uyarısı**: 50+ polyline seçildiğinde kullanıcı onayı
+- **Güvenli işlem**: Entity data ile doğrudan özellik ayarlama
+
+### Teknik İyileştirmeler
+- Entity modification yerine ENTMOD/ENTUPD kullanımı
+- Renk değeri validasyonu ve otomatik düzeltme
+- Global değişken yönetimi
+- Kullanıcı etkileşimi iyileştirmeleri
+
+### Kullanıcı Deneyimi
+- Daha açıklayıcı hata mesajları
+- Tolerans ayarlama kolaylığı
+- Büyük dosyalar için uyarı sistemi
+- Session boyunca ayar hatırlama
