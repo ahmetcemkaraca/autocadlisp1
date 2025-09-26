@@ -1,0 +1,47 @@
+---
+alwaysApply: true
+description: Global Cursor instructions mirroring .github/copilot-instructions.md for this repo.
+---
+
+## Mandatory Development Workflow
+
+Always use Context7 MCP tools when code generation, setup/config, or library/API docs are needed. Keep replies concise; code must be complete and runnable.
+
+### Git Branch Workflow
+
+Work on feature branches for every task. Never merge directly to `main`; open PRs for human review. Branch naming: `feature/*`, `bugfix/*`, `docs/*`.
+
+Commands (PowerShell):
+```powershell
+git checkout main ; git pull origin main ; git checkout -b feature/task-name
+```
+
+### Before Any Implementation or Fix
+
+1. Identify the task
+2. Read relevant files under `.github/instructions/`
+3. Apply guidelines and preserve existing functionality
+4. Check and fix imports where applicable
+5. Update documentation under `docs/`
+6. Validate compliance
+
+### Import & Documentation Automation
+
+Validate scripts compile/run where applicable and document new modules with short Turkish guides under `docs/`.
+
+### Documentation Standards
+
+User-facing docs are Turkish. Code and identifiers are English; comments and logs are Turkish.
+
+### Semantic Versioning
+
+Use SemVer and maintain `CHANGELOG.md`. Tie version bumps to Conventional Commits and keep `version.md` updated per cycle.
+
+### Registry & Persistent Context
+
+Keep `docs/registry/*.json` updated on public-contract changes and maintain `version.md` with timestamped summaries.
+
+### Security Defaults
+
+Never hardcode secrets. Validate inputs, sanitize outputs, and audit dependencies.
+
