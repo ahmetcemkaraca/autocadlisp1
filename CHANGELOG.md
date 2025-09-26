@@ -7,6 +7,13 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanmak
 
 ## [Unreleased]
 
+## [1.3.0] - 2025-09-26
+
+### Added
+- CTILE70: Kontur çizgilerini 70x70 cm karo bloklarına bölen komut
+- Dokümantasyon: `docs/lisp/contour-tiler.md`
+- README: CTILE70 ekleme
+
 ## [1.2.0] - 2025-09-26
 
 ### Added

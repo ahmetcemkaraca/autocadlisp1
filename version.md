@@ -84,6 +84,21 @@
 
 ## v1.2.0 - 2D Polyline Basitleştirme (Douglas–Peucker)
 **Tarih:** 2025-09-26 15:05:00
+-
+## v1.3.0 - Konturları 70x70 Karo Bloklarına Bölme
+**Tarih:** 2025-09-26 15:25:00
+
+### Yeni Özellikler
+- `CTILE70` komutu: Konturları 70x70 (veya verilen) karelere böler
+- Her karoyu XCLIP’li ayrı bir blok yerleşimi olarak dizer
+
+### Kullanım
+- `APPLOAD` → `contour-tiler.lsp`, komut `CTILE70`
+- Genişlik/yükseklik, boşluk, sütun sayısı parametreleri
+
+### Notlar
+- Kaynak seçim korunur (Retain), WCS önerilir
+- Karo etiketleri otomatik eklenir (Tcol-row)
 
 ### Yeni Özellikler
 - `SIMPLIFYPL` komutu: 2D LWPOLYLINE vertex sayısını tolerans ile azaltır

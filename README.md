@@ -10,6 +10,7 @@ AutoCAD'de mevcut polyline çizgilerini curved (eğri) çizgiler haline getiren 
 - **JOINPL**: İki polyline'ı uç uca birleştirir
 - **AUTOJOINPL**: Seçilen polyline'lar arasında uç uca gelenleri otomatik birleştirir
 - **SIMPLIFYPL**: 2D LWPOLYLINE vertex sayısını tolerans ile azaltır
+- **CTILE70**: Konturları 70x70 cm karolara böler ve XCLIP ile dizer
 
 ## 🚀 Hızlı Başlangıç
 
@@ -22,6 +23,7 @@ AutoCAD'de mevcut polyline çizgilerini curved (eğri) çizgiler haline getiren 
 Detaylı kullanım kılavuzları:
 - [docs/lisp/polyline-to-curve.md](docs/lisp/polyline-to-curve.md)
 - [docs/lisp/polyline-simplify.md](docs/lisp/polyline-simplify.md)
+- [docs/lisp/contour-tiler.md](docs/lisp/contour-tiler.md)
 
 ## 💻 Kullanım Örnekleri
 
@@ -60,7 +62,8 @@ Toplam 3 polyline çifti birleştirildi.
 ```
 ├── src/lisp/                  # LISP kaynak kodları
 │   ├── polyline-to-curve.lsp    # Eğri/spline dönüşüm araçları
-│   └── polyline-simplify.lsp    # Vertex azaltma (Douglas–Peucker)
+│   ├── polyline-simplify.lsp    # Vertex azaltma (Douglas–Peucker)
+│   └── contour-tiler.lsp        # Konturları 70x70 karolara böler
 ├── docs/lisp/                 # LISP dokümantasyonları  
 │   ├── polyline-to-curve.md     # Detaylı kullanım kılavuzu
 │   └── polyline-simplify.md     # Basitleştirme kılavuzu
