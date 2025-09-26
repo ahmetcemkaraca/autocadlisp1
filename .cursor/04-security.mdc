@@ -1,0 +1,18 @@
+---
+applyTo: "**/*"
+description: Security, secret hygiene, and safety rules.
+---
+
+## Secrets
+
+- Never hardcode tokens, API keys, or credentials
+- Prefer environment variables or OS keyring; ignore via `.gitignore`
+
+## Validation
+
+- Validate user inputs; sanitize outputs; log minimally necessary data
+
+## Dependencies
+
+- Prefer well-maintained packages; pin versions for production scripts
+

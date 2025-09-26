@@ -1,0 +1,53 @@
+---
+applyTo: "**/*"
+description: Project-wide policy for Cursor. Language/output, branching, documentation, and safety rules.
+---
+
+## Language & Output Policy
+
+- Code identifiers: English
+- In-code comments and log messages: Turkish
+- Chat responses to user: Turkish and concise
+- UI text: English by default via i18n; avoid hardcoding in components
+
+Examples:
+```lisp
+; Kullanıcı girdisi doğrulandı
+(princ "Operation completed")
+```
+
+## Branch Workflow
+
+- Always work on feature branches from `main`
+- Do not merge to `main` directly; open PRs for review
+
+Example commands:
+```powershell
+git checkout main ; git pull origin main ; git checkout -b feature/task-name
+```
+
+## Conventional Commits & SemVer
+
+- feat → MINOR, fix/perf → PATCH, refactor/docs/chore/test → PATCH (unless breaking)
+- Use CHANGELOG.md with Added/Changed/Fixed/Removed/Deprecated/Security sections
+
+## Registry & Persistent Context
+
+- Update `docs/registry/identifiers.json`, `docs/registry/endpoints.json`, `docs/registry/schemas.json` whenever public contracts change
+- Maintain `version.md` entries per development cycle with timestamp and concise summary
+
+## Security Defaults
+
+- Never commit secrets; use environment or local secure storage
+- Validate inputs, sanitize outputs, and prefer least-privileged operations
+
+## Documentation
+
+- User-facing docs in Turkish; technical identifiers remain English
+- Add or update docs under `docs/` when adding modules, scripts, or commands
+
+## Import/Dependency Hygiene
+
+- Ensure scripts reference available tools and handle errors gracefully
+- Keep PowerShell scripts idempotent and non-interactive by default
+

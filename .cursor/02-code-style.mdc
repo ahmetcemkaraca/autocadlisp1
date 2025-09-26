@@ -1,0 +1,38 @@
+---
+applyTo: "src/**/*.lsp,**/*.md,**/*.ps1"
+description: Code style and naming conventions derived from .github/instructions.
+---
+
+## General
+
+- Prefer readability over brevity; descriptive function and variable names
+- In comments/logs, explain "why" in Turkish; avoid inline noise
+- Keep line width reasonable; avoid horizontal scrolling
+
+## AutoLISP Style (src/**/*.lsp)
+
+- Function names: English, verb-phrase where appropriate
+- Variables: English, descriptive
+- Comments: Turkish
+- Handle errors with `vl-catch-all-apply` where needed; never leave global state dirty
+
+Example:
+```lisp
+; Polylinelerden spline üretir ve orijinal objeyi saklar
+(defun c:PolylineToCurve (/ sel)
+  (setq sel (ssget "_X" '((0 . "LWPOLYLINE"))))
+  (if sel
+    (progn (prompt "\nSeçim bulundu") (princ))
+    (prompt "\nPolyline bulunamadı"))
+  (princ))
+```
+
+## PowerShell Style (scripts/*.ps1)
+
+- Non-interactive by default; add `-WhatIf` and `-Confirm:$false` where safe
+- Use `Write-Host`/`Write-Output` with concise Turkish messages
+
+## Markdown Docs (docs/**)
+
+- User-facing docs in Turkish; include short runnable examples
+

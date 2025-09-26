@@ -1,0 +1,29 @@
+---
+applyTo: "**/*"
+description: Cursor execution workflow aligned with .github/copilot-instructions.
+---
+
+## Task Flow
+
+1. Identify task and read relevant `.github/instructions/*.md`
+2. Create a feature branch from `main`
+3. Implement minimal vertical slice; keep changes scoped
+4. Update registry/docs if contracts or files added/renamed
+5. Commit using Conventional Commits; open PR
+
+### Branch Commands (PowerShell)
+
+```powershell
+git checkout main ; git pull origin main ; git checkout -b feature/task-name
+```
+
+### Commit Examples
+
+- `feat(lisp): add polyline-to-curve command usage doc`
+- `fix(scripts): handle missing gh in rehydrate-context.ps1`
+
+## Quality Gates
+
+- Validate PowerShell scripts locally
+- Smoke-test AutoLISP commands in a sample DWG when applicable
+
