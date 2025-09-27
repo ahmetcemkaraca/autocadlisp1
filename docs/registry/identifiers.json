@@ -25,6 +25,32 @@
         "*JOIN-TOLERANCE*"
       ],
       "description": "Polyline çizgilerini curved (eğri) çizgiler haline getiren ve polyline'ları birleştiren LISP fonksiyonları"
+    },
+    {
+      "name": "auto-numbered-text.lsp",
+      "path": "src/lisp/auto-numbered-text.lsp",
+      "type": "AutoCAD LISP",
+      "exports": [
+        "c:AUTOTEXT",
+        "c:SETTEXTHEIGHT",
+        "c:SETTEXTSPACING",
+        "c:SHOWAUTOTEXTSETTINGS"
+      ],
+      "functions": [
+        "get-user-input",
+        "get-insertion-point",
+        "calculate-text-height",
+        "calculate-spacing",
+        "create-single-text",
+        "create-numbered-texts",
+        "validate-input",
+        "show-settings"
+      ],
+      "variables": [
+        "*AUTO-TEXT-HEIGHT*",
+        "*AUTO-TEXT-SPACING*"
+      ],
+      "description": "1'den istenen sayıya kadar otomatik boyutlu text yazan LISP programı"
     }
   ]
 }

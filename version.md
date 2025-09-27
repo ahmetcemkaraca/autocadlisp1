@@ -112,3 +112,36 @@
 ### Dokümantasyon
 - `docs/lisp/polyline-simplify.md` kullanım kılavuzu
 - `README.md` güncellendi
+
+## v1.4.0 - Otomatik Numaralı Text Yazma
+**Tarih:** 2025-01-27 12:00:00
+
+### Yeni Özellikler
+- **AUTOTEXT komutu**: 1'den istenen sayıya kadar otomatik boyutlu text yazar
+- **Otomatik boyutlandırma**: Sayı miktarına göre text yüksekliği otomatik hesaplanır
+- **Esnek yerleştirme**: Kullanıcı text başlangıç noktasını seçebilir
+- **Ayarlanabilir parametreler**: Text yüksekliği ve satır aralığı ayarlanabilir
+
+### Komutlar
+- `AUTOTEXT`: Ana komut - 1'den N'e kadar text yazar
+- `SETTEXTHEIGHT`: Text yüksekliğini ayarlar
+- `SETTEXTSPACING`: Satır aralığı çarpanını ayarlar
+- `SHOWAUTOTEXTSETTINGS`: Mevcut ayarları gösterir
+
+### Otomatik Boyutlandırma Algoritması
+- **1-10 arası**: Normal boyut (100%)
+- **11-50 arası**: %80 boyut
+- **51-100 arası**: %60 boyut
+- **101-500 arası**: %40 boyut
+- **500+ arası**: %30 boyut
+
+### Teknik Özellikler
+- Maksimum 10,000 sayıya kadar destek
+- Hata kontrolü ve doğrulama
+- Global değişken yönetimi (`*AUTO-TEXT-HEIGHT*`, `*AUTO-TEXT-SPACING*`)
+- Türkçe kullanıcı arayüzü
+
+### Dokümantasyon
+- `docs/lisp/auto-numbered-text.md` detaylı kullanım kılavuzu
+- Registry güncellemeleri (`docs/registry/identifiers.json`)
+- Kod yapısı ve fonksiyon referansları
