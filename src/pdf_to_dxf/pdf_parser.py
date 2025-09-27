@@ -3,7 +3,6 @@ PDF Parser Module
 PDF dosyalarından geometrik çizimleri çıkarır ve analiz eder.
 """
 
-import fitz  # PyMuPDF
 import pdfplumber
 from typing import List, Dict, Any, Tuple, Optional
 import logging

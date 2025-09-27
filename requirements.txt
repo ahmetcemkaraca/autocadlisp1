@@ -1,6 +1,5 @@
 # PDF to DXF Converter Dependencies
 # PDF processing libraries
-PyMuPDF==1.23.14
 pdfplumber==0.10.3
 
 # DXF file handling
