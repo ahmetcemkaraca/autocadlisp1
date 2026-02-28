@@ -1,5 +1,21 @@
 # Version History
 
+## v1.1.0 - Numaralandırma Özelliği
+**Tarih:** 2026-02-28 15:45:00
+
+### Yeni Özellikler
+- **NUMBER komutu**: 1'den kaça kadar seçilen konumlara numaraları yerleştirir
+- Metin boyutu dinamik olarak ayarlanabilir (varsayılan: 2.5)
+- Her sayı için tıklayarak konum belirleme
+- ESC tuşu ile işlemi durdurma / devam etme kontrolü
+- Güvenli input validasyonu (pozitif sayılar, başlangıç < bitiş)
+- TEXT entity oluşturma ile AutoCAD uyumluluğu
+
+### İyileştirmeler
+- Başlangıç mesajına NUMBER komutu eklendi
+- Kapsamlı error handling ve kullanıcı geri bildirimi
+- Türkçe yorumlar ve mesajlarla kodlanabilirlik artırıldı
+
 ## v1.0.0 - AutoCAD LISP Polyline to Curve Dönüştürücü
 **Tarih:** 2025-09-26 14:09:49
 

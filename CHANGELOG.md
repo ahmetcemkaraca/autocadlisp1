@@ -7,6 +7,24 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanmak
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-28
+
+### Added
+- **NUMBER komutu**: Numaralandırma özelliği
+  - 1'den kaça kadar numaraları seçilen konumlara yerleştir
+  - Metin boyutu özelleştirilebilir (varsayılan: 2.5)
+  - İnteraktif tıklama ile konum belirleme
+  - ESC tuşu ile işlemi durdurma
+
+### Changed
+- README.md numaralandırma özelliğini içerecek şekilde güncellenmiş
+- Başlangıç mesajına NUMBER komutu eklendi
+
+### Technical
+- TEXT entity oluşturma fonksiyonu (`create-number-text`) eklendi
+- Input validasyonu iyileştirildi (başlangıç sayısı, bitiş sayısı, metin boyutu kontrolü)
+- AutoCAD DXF entitesi uyumluluğu kontrol edildi
+
 ## [1.0.1] - 2025-09-26
 
 ### Added

@@ -9,6 +9,7 @@ AutoCAD'de mevcut polyline çizgilerini curved (eğri) çizgiler haline getiren 
 - **FITCURVE**: Polyline'ları fit curve (uygun eğri) yapar
 - **JOINPL**: İki polyline'ı uç uca birleştirir
 - **AUTOJOINPL**: Seçilen polyline'lar arasında uç uca gelenleri otomatik birleştirir
+- **NUMBER**: 1'den kaça kadar seçtiğin konumlara numaraları yerleştirir (metin boyutu ayarlanabilir)
 
 ## 🚀 Hızlı Başlangıç
 
@@ -51,6 +52,30 @@ Komut: AUTOJOINPL
 Birleştirilecek polyline'ları seçin: [birden çok çizgi seç]
 Toplam 3 polyline çifti birleştirildi.
 ```
+
+### Numaralandırma
+```
+Komut: NUMBER
+=== NUMARALANDIRMA PROGRAMI ===
+Başlangıç sayısı [1]: 
+Bitiş sayısı: 5
+Metin boyutu [2.5]: 3.5
+Toplam 5 sayı yerleştirilecek.
+(Her sayı için konumu tıklayın, ESC ile çıkın)
+
+>>> 1. sayı için konumu seç:  [tıkla] '1'
+>>> 2. sayı için konumu seç:  [tıkla] '2'
+>>> 3. sayı için konumu seç:  [tıkla] '3'
+[...]
+>>> 5. sayı için konumu seç:  [tıkla] '5'
+✓ Tüm 5 sayı başarıyla yerleştirildi.
+```
+
+**Özellikler:**
+- 1'den başlayarak istediğin sayıya kadar numaralandır
+- Her sayı için metin boyutunu ayarla (varsayılan: 2.5)
+- Tıklayarak her sayının konumunu belirle
+- ESC tuşu ile işlemi istediğin zaman durdur
 
 ## 📁 Proje Yapısı
 

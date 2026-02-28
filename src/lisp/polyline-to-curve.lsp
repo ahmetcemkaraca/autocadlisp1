@@ -498,6 +498,145 @@
   )
 )
 
+;;; ========================================
+;;; NUMARALANDıRMA FÖNKSİYONLARI
+;;; ========================================
+
+(defun c:number (/ start-num end-num text-height pt i current-num input-valid)
+  "Numaralandırma: 1'den kaça kadar seçilen konumlara metin yerleştirir
+   
+   Kullanım:
+   - Başlangıç sayısını gir (default: 1)
+   - Bitiş sayısını gir
+   - Metin boyutunu gir (default: 2.5)
+   - Her sayı için tıkla ve konumu seç
+   - ESC ile işlemi sonlandır"
+
+  (princ "\n=== NUMARALANDIRMA PROGRAMI ===")
+  
+  ;; Başlangıç sayısını al
+  (setq input-valid nil)
+  (while (not input-valid)
+    (initget 0)
+    (setq start-num (getint "\nBaşlangıç sayısı [1]: "))
+    (if (null start-num)
+      (setq start-num 1)
+    )
+    (if (< start-num 0)
+      (princ "\nHata: Sayı 0 veya daha büyük olmalı!")
+      (setq input-valid t)
+    )
+  )
+  
+  ;; Bitiş sayısını al
+  (setq input-valid nil)
+  (while (not input-valid)
+    (initget 0)
+    (setq end-num (getint "\nBitiş sayısı: "))
+    (if (null end-num)
+      (progn
+        (princ "\nHata: Bitiş sayısı gereklidir!")
+        (princ)
+        (exit)
+      )
+    )
+    (if (< end-num start-num)
+      (princ "\nHata: Bitiş sayısı başlangıç sayısından büyük olmalı!")
+      (setq input-valid t)
+    )
+  )
+  
+  ;; Metin boyutunu al
+  (initget 0)
+  (setq text-height (getreal "\nMetin boyutu [2.5]: "))
+  (if (null text-height)
+    (setq text-height 2.5)
+  )
+  
+  (if (<= text-height 0)
+    (progn
+      (princ "\nHata: Metin boyutu 0'dan büyük olmalı!")
+      (princ)
+      (exit)
+    )
+  )
+  
+  ;; Sayıları yerleştir
+  (setq i start-num)
+  (princ (strcat "\nToplam " (itoa (- end-num start-num -1)) " sayı yerleştirilecek."))
+  (princ "\n(Her sayı için konumu tıklayın, ESC ile çıkın)")
+  
+  (while (<= i end-num)
+    (princ (strcat "\n>>> " (itoa i) ". sayı için konumu seç: "))
+    (setq pt (getpoint))
+    
+    (if pt
+      (progn
+        ;; Metin entity'si oluştur
+        (if (create-number-text pt (itoa i) text-height)
+          (setq i (1+ i))
+          (progn
+            (princ "\nHata: Metin oluşturulamadı. Yeniden deneyin.")
+          )
+        )
+      )
+      (progn
+        ;; ESC tuşuna basıldı
+        (princ "\n--- İŞLEM SONLANDIRILDI ---")
+        (if (> i start-num)
+          (princ (strcat "\n" (itoa (- i start-num)) " sayı başarıyla yerleştirildi."))
+          (princ "\nHiçbir sayı yerleştirilmedi.")
+        )
+        (setq i (1+ end-num))  ; Loop'u sonlandır
+      )
+    )
+  )
+  
+  (if (> i end-num)
+    (princ (strcat "\n✓ Tüm " (itoa (- end-num start-num -1)) " sayı başarıyla yerleştirildi."))
+  )
+  
+  (princ)
+)
+
+(defun create-number-text (pt text-string height / ent-list result)
+  "Verilen konuma metin entity'si (TEXT) oluşturur
+   
+   Parametreler:
+   pt         - Metin konumu (3D nokta)
+   text-string - Metin içeriği (string)
+   height     - Metin yüksekliği (gerçek sayı)
+   
+   Döndürür: T = başarılı, nil = başarısız"
+  
+  (setq ent-list (list
+    (cons 0 "TEXT")                 ; Entity tipi
+    (cons 10 pt)                    ; Başlangıç konumu
+    (cons 40 height)                ; Yükseklik
+    (cons 1 text-string)            ; Metin içeriği
+    (cons 7 "Standard")             ; Font stili
+    (cons 72 1)                     ; Yatay hizalama (1=merkez)
+    (cons 11 pt)                    ; Hizalama noktası
+    (cons 50 0)                     ; Rotasyon açısı (0 derece)
+  ))
+  
+  ;; Entity'yi oluştur ve döndür
+  (if (entmake ent-list)
+    (progn
+      (princ (strcat " '" text-string "'"))
+      t
+    )
+    (progn
+      (princ " [HATA]")
+      nil
+    )
+  )
+)
+
+;;; ========================================
+;;; BAŞLANGIÇ MESAJI
+;;; ========================================
+
 (princ "\nPolyline to Curve LISP yüklendi!")
 (princ "\nKomutlar:")
 (princ "\n  PL2CURVE - Polyline'ları spline eğrilerine dönüştürür")
@@ -506,6 +645,7 @@
 (princ "\n  JOINPL - İki polyline'ı uç uca birleştirir")
 (princ "\n  AUTOJOINPL - Seçilen polyline'lar arasında uç uca gelenleri otomatik birleştirir")
 (princ "\n  SETTOL - Birleştirme toleransını ayarlar")
+(princ "\n  NUMBER - 1'den kaça kadar numaralandırma yapar")
 (princ "\nKullanım için komut satırında istediğiniz komutu yazın.")
 (princ (strcat "\nMevcut birleştirme toleransı: " (rtos *JOIN-TOLERANCE* 2 6)))
 (princ)
