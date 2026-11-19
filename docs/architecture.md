@@ -12,6 +12,8 @@ PolylineTools is plain AutoLISP organised into small modules. `scripts/build.ps1
 | `30-curve.lsp` | `PL2CURVE`, `SMOOTHPL`, `FITCURVE`. |
 | `40-join.lsp` | `JOINPL`, `AUTOJOINPL`, `SETTOL`. |
 | `50-number.lsp` | `NUMBER`. |
+| `60-simplify.lsp` | `SIMPLIFYPL`: Douglas-Peucker on the straight runs between arcs. |
+| `70-tile.lsp` | `CTILE70`: bounding box, source block, grid, `XCLIP` tiles. |
 | `90-help.lsp` | `PLXHELP`, `PLXLANG`, the load banner. |
 
 ## Data model

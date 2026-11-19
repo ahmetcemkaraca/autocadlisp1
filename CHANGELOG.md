@@ -74,4 +74,5 @@ Complete restructure of the code base and the repository.
 - `PL2CURVE`, `SMOOTHPL` and `FITCURVE` commands.
 
 [Unreleased]: https://github.com/ahmetcemkaraca/autocadlisp/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/ahmetcemkaraca/autocadlisp/releases/tag/v2.1.0
 [2.0.0]: https://github.com/ahmetcemkaraca/autocadlisp/releases/tag/v2.0.0

@@ -38,7 +38,10 @@ Draw these with `PLINE` (use the `Arc` option for curved segments):
 | 15 | `NUMBER`, start 1, end 5, height 3.5, click 5 times | Texts 1..5, centered on the clicks, current text style. |
 | 16 | `NUMBER`, press `Enter` after two clicks | Command ends; message "2 number(s) placed". |
 | 17 | Rotate the UCS (`UCS Z 30`), run `NUMBER` | Text is aligned with the UCS axes. |
+| 18 | `PLXLANG` Turkish, then `PLXHELP` | Turkish messages with correct characters; switch back to English. |
 | 19 | `SIMPLIFYPL`, tolerance 0.5, select a polyline with many nearly collinear vertices | Vertex count drops (message shows how many), shape unchanged within tolerance, layer/color kept. `U` restores it. | Turkish, then `PLXHELP` | Turkish messages with correct characters; switch back to English. |
+| 20 | `SIMPLIFYPL` on B and D (they contain arcs) | Arc segments unchanged; the closed polyline stays closed. |
+| 21 | Draw contour lines covering about 200 x 150 units, rotate the UCS, run `CTILE70` with the defaults | Tiles appear to the right of the drawing, each clipped to 70 x 70 and labelled `Ti-j`; cells without geometry produce no tile; the originals are untouched; the UCS is restored afterwards. |
 
 ## Regression tips
 
