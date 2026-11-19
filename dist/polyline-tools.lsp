@@ -1,4 +1,4 @@
-;;; polyline-tools.lsp - PolylineTools 2.0.0
+;;; polyline-tools.lsp - PolylineTools 2.1.0
 ;;; GENERATED FILE - do not edit. Edit src/lisp/*.lsp and run scripts/build.ps1.
 ;;; https://github.com/ahmetcemkaraca/autocadlisp  (GPL-3.0)
 
@@ -10,7 +10,7 @@
 
 (vl-load-com)
 
-(setq *plx-version* "2.0.0")
+(setq *plx-version* "2.1.0")
 
 ;; User settings (kept for the lifetime of the drawing session).
 (if (not *plx-tolerance*) (setq *plx-tolerance* 0.001))
@@ -41,7 +41,10 @@
                      ("tr" . "Se\U+00E7imdeki birbirine de\U+011Fen t\U+00FCm polyline'lar\U+0131 birle\U+015Ftirir"))
     (help-settol    ("en" . "Set the join tolerance")
                     ("tr" . "Birle\U+015Ftirme tolerans\U+0131 ayarlar"))
-    (help-number    ("en" . "Place consecutive numbers as text at picked points")
+    (help-simplifypl ("en" . "Reduce polyline vertices (Douglas-Peucker), arcs are kept")
+                     ("tr" . "Polyline k\U+00F6\U+015Fe say\U+0131s\U+0131n\U+0131 azalt\U+0131r (Douglas-Peucker), yaylar korunur"))
+    (help-ctile70   ("en" . "Cut contours into clipped tile blocks and lay them out in a grid")
+                    ("tr" . "Konturlar\U+0131 XCLIP'li karo bloklar\U+0131na b\U+00F6ler ve \U+0131zgara olarak dizer"))    (help-number    ("en" . "Place consecutive numbers as text at picked points")
                     ("tr" . "Se\U+00E7ilen noktalara ard\U+0131\U+015F\U+0131k say\U+0131lar\U+0131 metin olarak yerle\U+015Ftirir"))
     (help-plxlang   ("en" . "Switch the message language (English / Turkish)")
                     ("tr" . "Mesaj dilini de\U+011Fi\U+015Ftirir (\U+0130ngilizce / T\U+00FCrk\U+00E7e)"))
@@ -107,7 +110,34 @@
                     ("tr" . "Metin nesnesi olu\U+015Fturulamad\U+0131."))
     (num-done       ("en" . "%1 number(s) placed.")
                     ("tr" . "%1 say\U+0131 yerle\U+015Ftirildi."))
-    (lang-set       ("en" . "Language: English")
+    (simp-tol       ("en" . "Simplification tolerance <%1>: ")
+                    ("tr" . "Basitle\U+015Ftirme tolerans\U+0131 <%1>: "))
+    (simp-done      ("en" . "Simplified %1 polyline(s); %2 vertex(es) removed.")
+                    ("tr" . "%1 polyline basitle\U+015Ftirildi; %2 k\U+00F6\U+015Fe kald\U+0131r\U+0131ld\U+0131."))
+    (simp-nochange  ("en" . "No polyline could be reduced. Try a larger tolerance.")
+                    ("tr" . "Hi\U+00E7bir polyline azalt\U+0131lamad\U+0131. Daha b\U+00FCy\U+00FCk bir tolerans deneyin."))
+    (simp-skipped   ("en" . "Skipped %1 object(s) (3D polylines and meshes are not supported).")
+                    ("tr" . "%1 nesne atland\U+0131 (3B polyline ve a\U+011Flar desteklenmez)."))
+    (tile-select    ("en" . "Select contour objects (LWPOLYLINE, POLYLINE, SPLINE, LINE, ARC): ")
+                    ("tr" . "Kontur nesnelerini se\U+00E7in (LWPOLYLINE, POLYLINE, SPLINE, LINE, ARC): "))
+    (tile-width     ("en" . "Tile width <%1>: ")
+                    ("tr" . "Karo geni\U+015Fli\U+011Fi <%1>: "))
+    (tile-height    ("en" . "Tile height <%1>: ")
+                    ("tr" . "Karo y\U+00FCksekli\U+011Fi <%1>: "))
+    (tile-gap       ("en" . "Gap between tiles in the layout <%1>: ")
+                    ("tr" . "D\U+00FCzendeki karolar aras\U+0131 bo\U+015Fluk <%1>: "))
+    (tile-cols      ("en" . "Tiles per row in the layout <%1>: ")
+                    ("tr" . "D\U+00FCzende sat\U+0131r ba\U+015F\U+0131na karo <%1>: "))
+    (tile-nobox     ("en" . "Could not determine the extents of the selection.")
+                    ("tr" . "Se\U+00E7imin s\U+0131n\U+0131rlar\U+0131 belirlenemedi."))
+    (tile-too-many  ("en" . "That would create %1 tiles. Use a larger tile size.")
+                    ("tr" . "Bu i\U+015Flem %1 karo olu\U+015Fturur. Daha b\U+00FCy\U+00FCk bir karo boyutu kullan\U+0131n."))
+    (tile-block-fail ("en" . "Could not create the source block.")
+                     ("tr" . "Kaynak blok olu\U+015Fturulamad\U+0131."))
+    (tile-none      ("en" . "No tile contains any of the selected objects.")
+                    ("tr" . "Hi\U+00E7bir karo se\U+00E7ilen nesnelerden birini i\U+00E7ermiyor."))
+    (tile-done      ("en" . "%1 tile(s) created in block %2.")
+                    ("tr" . "%2 blo\U+011Funda %1 karo olu\U+015Fturuldu."))    (lang-set       ("en" . "Language: English")
                     ("tr" . "Dil: T\U+00FCrk\U+00E7e"))))
 
 (defun plx:to-string (value)
@@ -170,6 +200,9 @@
   (if *plx-active*
     (progn
       (setq *plx-active* nil)
+      (if *plx-ucs-pushed*
+        (progn (command "_.UCS" "_P")
+               (setq *plx-ucs-pushed* nil)))
       (command "_.UNDO" "_END")
       (foreach item *plx-saved-vars*
         (plx:setvar (car item) (cdr item)))
@@ -201,6 +234,43 @@
 
 (defun plx:near (p q tol)
   (< (distance p q) tol))
+
+;; Switch to the World UCS for the rest of the command; plx:end restores the
+;; previous UCS.
+(defun plx:world-ucs ()
+  (command "_.UCS" "_W")
+  (setq *plx-ucs-pushed* T))
+
+;;; ---------------------------------------------------------------------------
+;;; Input and drawing helpers
+;;; ---------------------------------------------------------------------------
+
+;; Ask for a real number > 0; Enter (or an invalid value) returns DEFAULT.
+(defun plx:ask-real (key default / value)
+  (setq value (getreal (strcat "\n" (plx:fmt key (list default)))))
+  (if (and value (> value 0.0)) value default))
+
+;; Smallest integer that is >= X (X >= 0), at least 1.
+(defun plx:ceil (x / n)
+  (setq n (fix x))
+  (if (> (- x n) 1e-9) (setq n (1+ n)))
+  (max n 1))
+
+;; Create a TEXT object.  PT is expressed in the OCS defined by NORMAL.
+;; HALIGN/VALIGN are the DXF justification codes (72/73), e.g. 1/2 = middle centre.
+(defun plx:make-text (pt text height normal rotation halign valign)
+  (if (entmake
+        (list '(0 . "TEXT")
+              (cons 10 pt)
+              (cons 40 height)
+              (cons 1 text)
+              (cons 50 rotation)
+              (cons 7 (getvar "TEXTSTYLE"))
+              (cons 72 halign)
+              (cons 11 pt)
+              (cons 210 normal)
+              (cons 73 valign)))
+    T))
 
 ;;; ===== 10-polyline.lsp =====
 
@@ -628,21 +698,6 @@
 
 (if (not *plx-text-height*) (setq *plx-text-height* 2.5))
 
-;; Create a centred TEXT object.  PT is expressed in the OCS defined by NORMAL.
-(defun plx:make-number-text (pt text height normal rotation)
-  (if (entmake
-        (list '(0 . "TEXT")
-              (cons 10 pt)
-              (cons 40 height)
-              (cons 1 text)
-              (cons 50 rotation)
-              (cons 7 (getvar "TEXTSTYLE"))
-              '(72 . 1)
-              (cons 11 pt)
-              (cons 210 normal)
-              '(73 . 2)))
-    T))
-
 ;;; NUMBER - click once per number; Enter or ESC ends the command.
 (defun c:number (/ start end height input n count pt normal rotation)
   (plx:begin nil)
@@ -673,15 +728,289 @@
          (while (and (<= n end)
                      (setq pt (getpoint
                                 (strcat "\n" (plx:fmt 'num-pick (list n))))))
-           (if (plx:make-number-text (trans pt 1 normal)
+           (if (plx:make-text (trans pt 1 normal)
                                      (itoa n)
                                      height
                                      normal
-                                     rotation)
+                                     rotation
+                                     1
+                                     2)
              (setq n     (1+ n)
                    count (1+ count))
              (plx:say 'num-failed nil)))
          (plx:say 'num-done (list count))))))
+  (plx:end))
+
+;;; ===== 60-simplify.lsp =====
+
+;;; ---------------------------------------------------------------------------
+;;; 60-simplify.lsp - SIMPLIFYPL: reduce polyline vertices (Douglas-Peucker)
+;;;
+;;; Arc segments are never touched.  Each run of straight segments between
+;;; arcs (or between the ends of the polyline) is simplified on its own with
+;;; its end points fixed.
+;;; ---------------------------------------------------------------------------
+
+(if (not *plx-simplify-tol*) (setq *plx-simplify-tol* 0.5))
+
+(defun plx:dist2d (p q)
+  (distance (list (car p) (cadr p)) (list (car q) (cadr q))))
+
+;; Distance in the XY plane from P to the segment A-B.
+(defun plx:point-segment-distance (p a b / dx dy len2 u)
+  (setq dx   (- (car b) (car a))
+        dy   (- (cadr b) (cadr a))
+        len2 (+ (* dx dx) (* dy dy)))
+  (if (< len2 1e-18)
+    (plx:dist2d p a)
+    (progn
+      (setq u (/ (+ (* (- (car p) (car a)) dx)
+                    (* (- (cadr p) (cadr a)) dy))
+                 len2))
+      (cond
+        ((< u 0.0) (plx:dist2d p a))
+        ((> u 1.0) (plx:dist2d p b))
+        (T (plx:dist2d p (list (+ (car a) (* u dx))
+                               (+ (cadr a) (* u dy)))))))))
+
+(defun plx:take (n lst / out)
+  (repeat n
+    (setq out (cons (car lst) out)
+          lst (cdr lst)))
+  (reverse out))
+
+(defun plx:drop (n lst)
+  (repeat n
+    (setq lst (cdr lst)))
+  lst)
+
+;; Douglas-Peucker on a list of points; the first and last point are kept.
+(defun plx:douglas-peucker (pts eps / a b worst worst-i i d p)
+  (if (<= (length pts) 2)
+    pts
+    (progn
+      (setq a       (car pts)
+            b       (last pts)
+            worst   -1.0
+            worst-i 0
+            i       1)
+      (foreach p (cdr (plx:butlast pts))
+        (setq d (plx:point-segment-distance p a b))
+        (if (> d worst)
+          (setq worst   d
+                worst-i i))
+        (setq i (1+ i)))
+      (if (> worst eps)
+        (append (plx:douglas-peucker (plx:take (1+ worst-i) pts) eps)
+                (cdr (plx:douglas-peucker (plx:drop worst-i pts) eps)))
+        (list a b)))))
+
+;; Simplify the points of one straight run.  Every returned vertex has a zero
+;; bulge except the last one, which gets LAST-BULGE (the arc that follows).
+(defun plx:simplify-run (pts last-bulge eps / simple out p)
+  (setq simple (plx:douglas-peucker pts eps))
+  (foreach p (plx:butlast simple)
+    (setq out (cons (cons p 0.0) out)))
+  (reverse (cons (cons (last simple) last-bulge) out)))
+
+;; Simplify an OPEN vertex list.  Returns a new vertex list.
+(defun plx:simplify-open (verts eps / n i v run out)
+  (setq n (1- (length verts))
+        i 0)
+  (repeat n
+    (setq v   (nth i verts)
+          run (cons (car v) run))
+    (if (/= 0.0 (cdr v))
+      (setq out (append out (plx:simplify-run (reverse run) (cdr v) eps))
+            run nil))
+    (setq i (1+ i)))
+  (setq run (cons (car (last verts)) run))
+  (append out (plx:simplify-run (reverse run) 0.0 eps)))
+
+;; Index of the first vertex that starts an arc segment, or nil.
+(defun plx:first-arc-index (verts / i found v)
+  (setq i 0)
+  (foreach v verts
+    (if (and (not found) (/= 0.0 (cdr v)))
+      (setq found i))
+    (setq i (1+ i)))
+  found)
+
+;; Simplify a vertex list.  Returns (VERTS . CLOSED).  Closed polylines are
+;; rotated to start at an arc (when there is one), simplified as an open
+;; polyline that returns to its start, and closed again.
+(defun plx:simplify-verts (verts closed eps / k rotated result)
+  (if (not closed)
+    (cons (plx:simplify-open verts eps) nil)
+    (progn
+      (setq k       (plx:first-arc-index verts)
+            rotated (if (and k (> k 0))
+                      (append (plx:drop k verts) (plx:take k verts))
+                      verts)
+            result  (plx:simplify-open
+                      (append rotated (list (cons (car (car rotated)) 0.0)))
+                      eps))
+      (cons (plx:butlast result) T))))
+
+;;; SIMPLIFYPL - reduce the vertex count of polylines within a tolerance.
+(defun c:simplifypl (/ tol enames done removed skipped ename verts closed result new)
+  (plx:begin nil)
+  (setq tol (plx:ask-real 'simp-tol *plx-simplify-tol*)
+        *plx-simplify-tol* tol
+        done 0 removed 0 skipped 0)
+  (if (setq enames (plx:select-polylines))
+    (progn
+      (foreach ename enames
+        (if (not (plx:flat-p ename))
+          (setq skipped (1+ skipped))
+          (progn
+            (setq verts  (plx:vertices ename)
+                  closed (plx:closed-p ename)
+                  result (plx:simplify-verts verts closed tol))
+            (if (and (< (length (car result)) (length verts))
+                     (>= (length (car result)) (if closed 3 2))
+                     (setq new (plx:make-lwpolyline (car result) (cdr result) ename)))
+              (progn
+                (entdel ename)
+                (setq done    (1+ done)
+                      removed (+ removed (- (length verts) (length (car result))))))))))
+      (if (> skipped 0) (plx:say 'simp-skipped (list skipped)))
+      (if (> done 0)
+        (plx:say 'simp-done (list done removed))
+        (plx:say 'simp-nochange nil)))
+    (plx:say 'nothing nil))
+  (plx:end))
+
+;;; ===== 70-tile.lsp =====
+
+;;; ---------------------------------------------------------------------------
+;;; 70-tile.lsp - CTILE70: cut contours into clipped tile blocks
+;;;
+;;; The selection is wrapped in one block.  For every grid cell that touches
+;;; the selection, the block is inserted, clipped to the cell with XCLIP and
+;;; moved into a compact layout to the right of the original drawing.  This is
+;;; handy for cutting large contour models in pieces (for example 70 x 70).
+;;; ---------------------------------------------------------------------------
+
+(if (not *plx-tile-width*)  (setq *plx-tile-width* 70.0))
+(if (not *plx-tile-height*) (setq *plx-tile-height* 70.0))
+(if (not *plx-tile-gap*)    (setq *plx-tile-gap* 10.0))
+(if (not *plx-tile-cols*)   (setq *plx-tile-cols* 5))
+
+(setq *plx-tile-filter* '((0 . "LWPOLYLINE,POLYLINE,SPLINE,LINE,ARC")))
+
+;; Bounding box of a selection set as ((minx miny) (maxx maxy)), or nil.
+(defun plx:bbox (ss / i obj pmin pmax lo hi minx miny maxx maxy)
+  (repeat (setq i (sslength ss))
+    (setq i   (1- i)
+          obj (vlax-ename->vla-object (ssname ss i)))
+    (if (not (vl-catch-all-error-p
+               (vl-catch-all-apply 'vla-getboundingbox (list obj 'pmin 'pmax))))
+      (progn
+        (setq lo   (vlax-safearray->list pmin)
+              hi   (vlax-safearray->list pmax)
+              minx (if minx (min minx (car lo)) (car lo))
+              miny (if miny (min miny (cadr lo)) (cadr lo))
+              maxx (if maxx (max maxx (car hi)) (car hi))
+              maxy (if maxy (max maxy (cadr hi)) (cadr hi))))))
+  (if minx (list (list minx miny) (list maxx maxy))))
+
+;; Wrap the selection in a new block with a unique name and keep the original
+;; objects (-BLOCK erases them, OOPS brings them back).  Returns the name or nil.
+(defun plx:make-block (ss / n name)
+  (setq n 1)
+  (while (tblsearch "BLOCK" (setq name (strcat "PLX_TILES_" (itoa n))))
+    (setq n (1+ n)))
+  (command "_.-BLOCK" name '(0.0 0.0 0.0) ss "")
+  (command "_.OOPS")
+  (if (tblsearch "BLOCK" name) name))
+
+;; True when a member of SS crosses or lies inside the rectangle P1-P2.
+(defun plx:tile-hit-p (ss p1 p2 / hits i hit)
+  (if (setq hits (ssget "_C" p1 p2 *plx-tile-filter*))
+    (repeat (setq i (sslength hits))
+      (setq i (1- i))
+      (if (ssmemb (ssname hits i) ss) (setq hit T))))
+  hit)
+
+;; Insert BLK so that the tile whose lower-left corner is TILE-MIN lands at
+;; DEST, and clip it to the DEST rectangle (W x H).  Returns the INSERT or nil.
+(defun plx:place-tile (blk tile-min dest w h / offset ins)
+  (setq offset (list (- (car dest) (car tile-min))
+                     (- (cadr dest) (cadr tile-min))
+                     0.0))
+  (if (entmake (list '(0 . "INSERT") (cons 2 blk) (cons 10 offset)))
+    (progn
+      (setq ins (entlast))
+      (command "_.XCLIP" ins "" "_N" "_R"
+               dest
+               (list (+ (car dest) w) (+ (cadr dest) h)))
+      ins)))
+
+;;; CTILE70 - cut contours into clipped tile blocks (default 70 x 70).
+(defun c:ctile70 (/ ss box lo hi w h gap cols nx ny blk origin i j k count
+                    tile-min dest label-h)
+  (plx:begin T)
+  (plx:world-ucs)
+  (plx:say 'tile-select nil)
+  (cond
+    ((not (setq ss (ssget *plx-tile-filter*)))
+     (plx:say 'nothing nil))
+    ((not (setq box (plx:bbox ss)))
+     (plx:say 'tile-nobox nil))
+    (T
+     (setq lo   (car box)
+           hi   (cadr box)
+           w    (plx:ask-real 'tile-width *plx-tile-width*)
+           h    (plx:ask-real 'tile-height *plx-tile-height*)
+           gap  (plx:ask-real 'tile-gap *plx-tile-gap*)
+           cols (max 1 (fix (plx:ask-real 'tile-cols *plx-tile-cols*)))
+           *plx-tile-width*  w
+           *plx-tile-height* h
+           *plx-tile-gap*    gap
+           *plx-tile-cols*   cols
+           nx   (plx:ceil (/ (- (car hi) (car lo)) w))
+           ny   (plx:ceil (/ (- (cadr hi) (cadr lo)) h)))
+     (cond
+       ((> (* nx ny) 2000)
+        (plx:say 'tile-too-many (list (* nx ny))))
+       ((not (setq blk (plx:make-block ss)))
+        (plx:say 'tile-block-fail nil))
+       (T
+        (setq origin  (list (+ (car hi) (* 2.0 gap)) (cadr lo))
+              label-h (/ (min w h) 14.0)
+              k       0
+              count   0
+              i       0)
+        (repeat nx
+          (setq j 0)
+          (repeat ny
+            (setq tile-min (list (+ (car lo) (* i w)) (+ (cadr lo) (* j h))))
+            (if (plx:tile-hit-p ss
+                                tile-min
+                                (list (+ (car tile-min) w) (+ (cadr tile-min) h)))
+              (progn
+                (setq dest (list (+ (car origin) (* (rem k cols) (+ w gap)))
+                                 (+ (cadr origin) (* (/ k cols) (+ h gap)))
+                                 0.0))
+                (if (plx:place-tile blk tile-min dest w h)
+                  (progn
+                    (plx:make-text (list (+ (car dest) (* 0.03 w))
+                                         (+ (cadr dest) (* 0.03 h))
+                                         0.0)
+                                   (strcat "T" (itoa i) "-" (itoa j))
+                                   label-h
+                                   '(0.0 0.0 1.0)
+                                   0.0
+                                   0
+                                   0)
+                    (setq count (1+ count))))
+                (setq k (1+ k))))
+            (setq j (1+ j)))
+          (setq i (1+ i)))
+        (if (> count 0)
+          (plx:say 'tile-done (list count blk))
+          (plx:say 'tile-none nil))))))
   (plx:end))
 
 ;;; ===== 90-help.lsp =====
@@ -697,6 +1026,8 @@
     ("JOINPL"     . help-joinpl)
     ("AUTOJOINPL" . help-autojoinpl)
     ("SETTOL"     . help-settol)
+    ("SIMPLIFYPL" . help-simplifypl)
+    ("CTILE70"    . help-ctile70)
     ("NUMBER"     . help-number)
     ("PLXLANG"    . help-plxlang)))
 

@@ -5,6 +5,8 @@
 .DESCRIPTION
   For every file in src/lisp this verifies:
     * parentheses and string quotes are balanced (comments are ignored)
+    * top-level forms start at column 0 and indented lines are inside a form
+    (catches a misplaced parenthesis even when the file is still balanced)
     * the file is pure ASCII and contains no tab characters
     * every plx: function that is called is also defined
     * no function is defined twice
@@ -74,6 +76,29 @@ function Remove-LispNoise {
     return $sb.ToString()
 }
 
+function Test-LispStructure {
+    # Top-level forms must start at column 0 at depth 0; any indented code line
+    # must be inside an open form. Works on the output of Remove-LispNoise.
+    param([string]$Clean, [string]$Name)
+
+    $depth = 0
+    $n = 0
+    foreach ($ln in ($Clean -split "`n")) {
+        $n++
+        $trim = $ln.TrimStart()
+        if ($trim.Length -gt 0) {
+            if ($ln[0] -eq '(' -and $depth -ne 0) {
+                $problems.Add("${Name}:${n}: top-level form starts inside an unclosed form (missing ')' above)")
+                $depth = 0
+            }
+            elseif ($ln[0] -ne '(' -and $depth -eq 0) {
+                $problems.Add("${Name}:${n}: indented code outside any form (extra ')' above)")
+            }
+        }
+        $depth += ([regex]::Matches($ln, '\(')).Count - ([regex]::Matches($ln, '\)')).Count
+        if ($depth -lt 0) { $depth = 0 }
+    }
+}
 $defined = @{}
 $cleaned = @{}
 
@@ -87,6 +112,7 @@ foreach ($file in $files) {
 
     $clean = Remove-LispNoise -Text $raw -Name $name
     $cleaned[$name] = $clean
+    Test-LispStructure -Clean $clean -Name $name
 
     foreach ($m in [regex]::Matches($clean, '\(defun\s+([^\s()]+)')) {
         $fn = $m.Groups[1].Value.ToLowerInvariant()

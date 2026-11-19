@@ -6,7 +6,7 @@ PolylineTools is plain AutoLISP organised into small modules. `scripts/build.ps1
 
 | Module | Responsibility |
 | --- | --- |
-| `00-core.lsp` | Version, settings, the EN/TR message table (`plx:msg`, `plx:fmt`, `plx:say`), the environment guard (`plx:begin` / `plx:end` / `plx:error`) and tiny list helpers. |
+| `00-core.lsp` | Version, settings, the EN/TR message table (`plx:msg`, `plx:fmt`, `plx:say`), the environment guard (`plx:begin` / `plx:end` / `plx:error`, `plx:world-ucs`), input/text helpers and tiny list helpers. |
 | `10-polyline.lsp` | Polyline model: classification predicates, reading vertices from `LWPOLYLINE` and `POLYLINE`, writing an `LWPOLYLINE`, copying properties, reversing and joining vertex lists. |
 | `20-geometry.lsp` | Bulge arc math and conversion of a vertex list into a flat list of points. |
 | `30-curve.lsp` | `PL2CURVE`, `SMOOTHPL`, `FITCURVE`. |

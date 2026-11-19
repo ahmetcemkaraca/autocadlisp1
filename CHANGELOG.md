@@ -5,6 +5,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-11-19
+
+### Added
+- `SIMPLIFYPL` command: Douglas-Peucker vertex reduction that keeps arc segments, closed state and object properties.
+- `CTILE70` command: cut contours into clipped tile blocks laid out in a grid.
+  Both were recovered from the old `feature/contour-tiler` branch and rewritten on top of the shared polyline model.
+
+### Changed
+- `CTILE70` fixes over the original prototype: the invalid `-BLOCK ... R` retain option is replaced by `OOPS`, tiles are inserted with `ENTMAKE` instead of `-INSERT` prompts, empty tiles are skipped, the layout no longer overlaps the source drawing, and the UCS is switched to World and restored.
+- `SIMPLIFYPL` fixes over the original prototype: arcs are no longer flattened to chords, the reserved symbol `T` is no longer used as a variable, and 3D polylines are skipped.
+- `SETSIMP` was folded into the `SIMPLIFYPL` tolerance prompt.
+- The auto-numbered text prototype is superseded by `NUMBER`.
+
 ## [2.0.0] - 2026-11-19
 
 Complete restructure of the code base and the repository.
@@ -60,5 +73,5 @@ Complete restructure of the code base and the repository.
 ### Added
 - `PL2CURVE`, `SMOOTHPL` and `FITCURVE` commands.
 
-[Unreleased]: https://github.com/ahmetcemkaraca/autocadlisp/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/ahmetcemkaraca/autocadlisp/compare/v2.1.0...HEAD
 [2.0.0]: https://github.com/ahmetcemkaraca/autocadlisp/releases/tag/v2.0.0

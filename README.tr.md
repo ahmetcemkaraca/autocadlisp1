@@ -5,11 +5,13 @@
 
 [English](README.md) | Türkçe
 
-AutoCAD'de sıkıcı olan dört işi yapan küçük bir AutoLISP araç seti:
+AutoCAD'de sıkıcı olan altı işi yapan küçük bir AutoLISP araç seti:
 
 - polyline'ları (yay segmentleri dahil) pürüzsüz spline eğrilere dönüştürür,
 - polyline'ları polyline olarak kalarak yumuşatır veya curve-fit yapar,
 - polyline'ları uç uca birleştirir (tek çift ya da tüm seçim) ve yay segmentlerini korur,
+- gereksiz köşe noktalarını tolerans dahilinde silerek polyline'ları sadeleştirir,
+- kontur çizimlerini XCLIP'li karolara bölüp ızgara olarak dizer (büyük modelleri parça parça kesmek için),
 - numaralandırma yapar: tıkladığınız noktalara `1, 2, 3 ...` metinlerini yerleştirir.
 
 Her şey **tek dosya** olarak gelir: [`dist/polyline-tools.lsp`](dist/polyline-tools.lsp). Bağımlılık ve kurulum programı yoktur.
@@ -34,6 +36,8 @@ Komut satırından da yükleyebilirsiniz: `(load "C:/yol/polyline-tools.lsp")`.
 | `JOINPL` | Uçları değen iki polyline'ı birleştirir. Gerekirse biri ters çevrilir; yay segmentleri ve ilk polyline'ın layer/rengi korunur. |
 | `AUTOJOINPL` | Seçimdeki birbirine değen tüm polyline zincirlerini birleştirir. Başladığı yerde biten zincirler kapalı polyline olur. |
 | `SETTOL` | İki uç noktanın "değiyor" sayılacağı mesafeyi ayarlar (varsayılan `0.001`). |
+| `SIMPLIFYPL` | Polyline'lardaki gereksiz köşeleri Douglas-Peucker algoritmasıyla siler. Önce tolerans (varsayılan `0.5`, hatırlanır), sonra polyline'lar sorulur. Yay segmentlerine dokunulmaz; kapalı polyline'lar kapalı kalır; layer, renk, çizgi tipi ve kalınlığı korunur. |
+| `CTILE70` | Seçilen kontur nesnelerini (`LWPOLYLINE`, `POLYLINE`, `SPLINE`, `LINE`, `ARC`) karo ızgarasına böler (varsayılan 70 x 70 çizim birimi). Seçime değen her karo, tek bir kaynak bloğun XCLIP'li bir eklemesi olur, `Ti-j` olarak etiketlenir ve çizimin sağında satırlar halinde dizilir. Orijinal nesneler yerinde kalır. World UCS'de çalışır, sonra UCS'nizi geri yükler. |
 | `NUMBER` | Başlangıç sayısı, bitiş sayısı ve metin yüksekliğini sorar; her tıklamada bir sayı yerleştirir (ortalı, geçerli UCS düzleminde). `Enter` veya `ESC` durdurur. |
 | `PLXHELP` | Komutları listeler. |
 | `PLXLANG` | Mesajları İngilizce / Türkçe arasında değiştirir. |
@@ -55,7 +59,7 @@ Polyline'ları seçin:  [nesneleri seç]
 ### Bilmekte fayda var
 
 - `JOINPL` ve `AUTOJOINPL`, aynı düzlemdeki açık 2B polyline'larla (`LWPOLYLINE` ve 2B `POLYLINE`) çalışır. Sonuç `LWPOLYLINE` olarak yazılır.
-- `PL2CURVE` 3B polyline'ları da kabul eder; 3B ağlar (mesh) atlanır.
+- `SIMPLIFYPL` düz (2B) polyline'larla çalışır; `CTILE70` çizimde `PLX_TILES_n` adlı bir blok bırakır (karolar bunu kullanır - karoları sildikten sonra `PURGE` yapın). da kabul eder; 3B ağlar (mesh) atlanır.
 - `NUMBER` kısa ve genel bir komut adıdır. Başka bir rutininiz de `NUMBER` ise `src/lisp/50-number.lsp` içindeki `c:number` adını değiştirin.
 - `PL2CURVE` orijinal nesneleri değiştirir. Geri almak için `U` kullanın.
 

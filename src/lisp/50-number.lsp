@@ -4,21 +4,6 @@
 
 (if (not *plx-text-height*) (setq *plx-text-height* 2.5))
 
-;; Create a centred TEXT object.  PT is expressed in the OCS defined by NORMAL.
-(defun plx:make-number-text (pt text height normal rotation)
-  (if (entmake
-        (list '(0 . "TEXT")
-              (cons 10 pt)
-              (cons 40 height)
-              (cons 1 text)
-              (cons 50 rotation)
-              (cons 7 (getvar "TEXTSTYLE"))
-              '(72 . 1)
-              (cons 11 pt)
-              (cons 210 normal)
-              '(73 . 2)))
-    T))
-
 ;;; NUMBER - click once per number; Enter or ESC ends the command.
 (defun c:number (/ start end height input n count pt normal rotation)
   (plx:begin nil)
@@ -49,11 +34,13 @@
          (while (and (<= n end)
                      (setq pt (getpoint
                                 (strcat "\n" (plx:fmt 'num-pick (list n))))))
-           (if (plx:make-number-text (trans pt 1 normal)
+           (if (plx:make-text (trans pt 1 normal)
                                      (itoa n)
                                      height
                                      normal
-                                     rotation)
+                                     rotation
+                                     1
+                                     2)
              (setq n     (1+ n)
                    count (1+ count))
              (plx:say 'num-failed nil)))

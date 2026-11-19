@@ -4,7 +4,7 @@
 
 (vl-load-com)
 
-(setq *plx-version* "2.0.0")
+(setq *plx-version* "2.1.0")
 
 ;; User settings (kept for the lifetime of the drawing session).
 (if (not *plx-tolerance*) (setq *plx-tolerance* 0.001))
@@ -35,7 +35,10 @@
                      ("tr" . "Se\U+00E7imdeki birbirine de\U+011Fen t\U+00FCm polyline'lar\U+0131 birle\U+015Ftirir"))
     (help-settol    ("en" . "Set the join tolerance")
                     ("tr" . "Birle\U+015Ftirme tolerans\U+0131 ayarlar"))
-    (help-number    ("en" . "Place consecutive numbers as text at picked points")
+    (help-simplifypl ("en" . "Reduce polyline vertices (Douglas-Peucker), arcs are kept")
+                     ("tr" . "Polyline k\U+00F6\U+015Fe say\U+0131s\U+0131n\U+0131 azalt\U+0131r (Douglas-Peucker), yaylar korunur"))
+    (help-ctile70   ("en" . "Cut contours into clipped tile blocks and lay them out in a grid")
+                    ("tr" . "Konturlar\U+0131 XCLIP'li karo bloklar\U+0131na b\U+00F6ler ve \U+0131zgara olarak dizer"))    (help-number    ("en" . "Place consecutive numbers as text at picked points")
                     ("tr" . "Se\U+00E7ilen noktalara ard\U+0131\U+015F\U+0131k say\U+0131lar\U+0131 metin olarak yerle\U+015Ftirir"))
     (help-plxlang   ("en" . "Switch the message language (English / Turkish)")
                     ("tr" . "Mesaj dilini de\U+011Fi\U+015Ftirir (\U+0130ngilizce / T\U+00FCrk\U+00E7e)"))
@@ -101,7 +104,34 @@
                     ("tr" . "Metin nesnesi olu\U+015Fturulamad\U+0131."))
     (num-done       ("en" . "%1 number(s) placed.")
                     ("tr" . "%1 say\U+0131 yerle\U+015Ftirildi."))
-    (lang-set       ("en" . "Language: English")
+    (simp-tol       ("en" . "Simplification tolerance <%1>: ")
+                    ("tr" . "Basitle\U+015Ftirme tolerans\U+0131 <%1>: "))
+    (simp-done      ("en" . "Simplified %1 polyline(s); %2 vertex(es) removed.")
+                    ("tr" . "%1 polyline basitle\U+015Ftirildi; %2 k\U+00F6\U+015Fe kald\U+0131r\U+0131ld\U+0131."))
+    (simp-nochange  ("en" . "No polyline could be reduced. Try a larger tolerance.")
+                    ("tr" . "Hi\U+00E7bir polyline azalt\U+0131lamad\U+0131. Daha b\U+00FCy\U+00FCk bir tolerans deneyin."))
+    (simp-skipped   ("en" . "Skipped %1 object(s) (3D polylines and meshes are not supported).")
+                    ("tr" . "%1 nesne atland\U+0131 (3B polyline ve a\U+011Flar desteklenmez)."))
+    (tile-select    ("en" . "Select contour objects (LWPOLYLINE, POLYLINE, SPLINE, LINE, ARC): ")
+                    ("tr" . "Kontur nesnelerini se\U+00E7in (LWPOLYLINE, POLYLINE, SPLINE, LINE, ARC): "))
+    (tile-width     ("en" . "Tile width <%1>: ")
+                    ("tr" . "Karo geni\U+015Fli\U+011Fi <%1>: "))
+    (tile-height    ("en" . "Tile height <%1>: ")
+                    ("tr" . "Karo y\U+00FCksekli\U+011Fi <%1>: "))
+    (tile-gap       ("en" . "Gap between tiles in the layout <%1>: ")
+                    ("tr" . "D\U+00FCzendeki karolar aras\U+0131 bo\U+015Fluk <%1>: "))
+    (tile-cols      ("en" . "Tiles per row in the layout <%1>: ")
+                    ("tr" . "D\U+00FCzende sat\U+0131r ba\U+015F\U+0131na karo <%1>: "))
+    (tile-nobox     ("en" . "Could not determine the extents of the selection.")
+                    ("tr" . "Se\U+00E7imin s\U+0131n\U+0131rlar\U+0131 belirlenemedi."))
+    (tile-too-many  ("en" . "That would create %1 tiles. Use a larger tile size.")
+                    ("tr" . "Bu i\U+015Flem %1 karo olu\U+015Fturur. Daha b\U+00FCy\U+00FCk bir karo boyutu kullan\U+0131n."))
+    (tile-block-fail ("en" . "Could not create the source block.")
+                     ("tr" . "Kaynak blok olu\U+015Fturulamad\U+0131."))
+    (tile-none      ("en" . "No tile contains any of the selected objects.")
+                    ("tr" . "Hi\U+00E7bir karo se\U+00E7ilen nesnelerden birini i\U+00E7ermiyor."))
+    (tile-done      ("en" . "%1 tile(s) created in block %2.")
+                    ("tr" . "%2 blo\U+011Funda %1 karo olu\U+015Fturuldu."))    (lang-set       ("en" . "Language: English")
                     ("tr" . "Dil: T\U+00FCrk\U+00E7e"))))
 
 (defun plx:to-string (value)
@@ -164,6 +194,9 @@
   (if *plx-active*
     (progn
       (setq *plx-active* nil)
+      (if *plx-ucs-pushed*
+        (progn (command "_.UCS" "_P")
+               (setq *plx-ucs-pushed* nil)))
       (command "_.UNDO" "_END")
       (foreach item *plx-saved-vars*
         (plx:setvar (car item) (cdr item)))
@@ -195,3 +228,40 @@
 
 (defun plx:near (p q tol)
   (< (distance p q) tol))
+
+;; Switch to the World UCS for the rest of the command; plx:end restores the
+;; previous UCS.
+(defun plx:world-ucs ()
+  (command "_.UCS" "_W")
+  (setq *plx-ucs-pushed* T))
+
+;;; ---------------------------------------------------------------------------
+;;; Input and drawing helpers
+;;; ---------------------------------------------------------------------------
+
+;; Ask for a real number > 0; Enter (or an invalid value) returns DEFAULT.
+(defun plx:ask-real (key default / value)
+  (setq value (getreal (strcat "\n" (plx:fmt key (list default)))))
+  (if (and value (> value 0.0)) value default))
+
+;; Smallest integer that is >= X (X >= 0), at least 1.
+(defun plx:ceil (x / n)
+  (setq n (fix x))
+  (if (> (- x n) 1e-9) (setq n (1+ n)))
+  (max n 1))
+
+;; Create a TEXT object.  PT is expressed in the OCS defined by NORMAL.
+;; HALIGN/VALIGN are the DXF justification codes (72/73), e.g. 1/2 = middle centre.
+(defun plx:make-text (pt text height normal rotation halign valign)
+  (if (entmake
+        (list '(0 . "TEXT")
+              (cons 10 pt)
+              (cons 40 height)
+              (cons 1 text)
+              (cons 50 rotation)
+              (cons 7 (getvar "TEXTSTYLE"))
+              (cons 72 halign)
+              (cons 11 pt)
+              (cons 210 normal)
+              (cons 73 valign)))
+    T))

@@ -9,6 +9,8 @@
     ("JOINPL"     . help-joinpl)
     ("AUTOJOINPL" . help-autojoinpl)
     ("SETTOL"     . help-settol)
+    ("SIMPLIFYPL" . help-simplifypl)
+    ("CTILE70"    . help-ctile70)
     ("NUMBER"     . help-number)
     ("PLXLANG"    . help-plxlang)))
 

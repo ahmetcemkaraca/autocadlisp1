@@ -5,11 +5,13 @@
 
 English | [Türkçe](README.tr.md)
 
-A small AutoLISP toolkit that does four jobs AutoCAD makes tedious:
+A small AutoLISP toolkit that does six jobs AutoCAD makes tedious:
 
 - turn polylines (including arc segments) into smooth splines,
 - smooth or curve-fit polylines without leaving the polyline type,
 - join polylines end to end - one pair or a whole selection - while keeping arc segments,
+- thin out polylines by removing redundant vertices within a tolerance,
+- cut contour drawings into clipped tiles laid out in a grid (for cutting large models in pieces),
 - number things: drop `1, 2, 3 ...` as text at the points you click.
 
 Everything ships as **one file**: [`dist/polyline-tools.lsp`](dist/polyline-tools.lsp). No dependencies, no installer.
@@ -34,6 +36,8 @@ You can also load it from the command line: `(load "C:/path/to/polyline-tools.ls
 | `JOINPL` | Joins two polylines whose endpoints touch. Either one is reversed when necessary; arc segments and layer/color of the first polyline are preserved. |
 | `AUTOJOINPL` | Joins every chain of touching polylines inside a selection. Chains that end where they started become closed polylines. |
 | `SETTOL` | Sets the distance (default `0.001`) within which two endpoints count as touching. |
+| `SIMPLIFYPL` | Removes redundant vertices from polylines with the Douglas-Peucker algorithm. Asks for a tolerance (default `0.5`, remembered), then for the polylines. Arc segments are never changed; closed polylines stay closed; layer, color, linetype and lineweight are kept. |
+| `CTILE70` | Cuts a selection of contour objects (`LWPOLYLINE`, `POLYLINE`, `SPLINE`, `LINE`, `ARC`) into a grid of tiles (default 70 x 70 drawing units). Each tile that touches the selection becomes a clipped (`XCLIP`) insert of one source block, labelled `Ti-j` and laid out in rows to the right of the drawing. The original objects stay in place. Works in the World UCS and restores your UCS afterwards. |
 | `NUMBER` | Asks for a start number, an end number and a text height, then places one number per click (centered, in the plane of the current UCS). `Enter` or `ESC` stops. |
 | `PLXHELP` | Lists the commands. |
 | `PLXLANG` | Switches messages between English and Turkish. |
@@ -55,7 +59,7 @@ Select polylines:  [select objects]
 ### Good to know
 
 - `JOINPL` and `AUTOJOINPL` handle open 2D polylines (`LWPOLYLINE` and 2D `POLYLINE`) that lie in the same plane. Joined results are written as `LWPOLYLINE`.
-- `PL2CURVE` also accepts 3D polylines; 3D meshes and polyface meshes are skipped.
+- `SIMPLIFYPL` handles flat (2D) polylines; `CTILE70` leaves a block named `PLX_TILES_n` in the drawing (it is what the tiles reference - `PURGE` it after exploding or deleting the tiles). 3D meshes and polyface meshes are skipped.
 - `NUMBER` is a short, generic command name. If another routine of yours is called `NUMBER`, load the files in the order you prefer or rename `c:number` in `src/lisp/50-number.lsp`.
 - `PL2CURVE` replaces the original objects. Use `U` to undo.
 
@@ -71,6 +75,8 @@ Select polylines:  [select objects]
 │   ├── 30-curve.lsp          PL2CURVE, SMOOTHPL, FITCURVE
 │   ├── 40-join.lsp           JOINPL, AUTOJOINPL, SETTOL
 │   ├── 50-number.lsp         NUMBER
+│   ├── 60-simplify.lsp       SIMPLIFYPL
+│   ├── 70-tile.lsp           CTILE70
 │   └── 90-help.lsp           PLXHELP, PLXLANG, load banner
 ├── scripts/
 │   ├── build.ps1             Bundles src/lisp into dist/
