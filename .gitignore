@@ -1,0 +1,22 @@
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# CAD artifacts
+*.bak
+*.dwl
+*.dwl2
+*.sv$
+*.fas
+*.vlx
+*.dcl.bak
+
+# Local scratch
+tmp/
+*.log

@@ -1,0 +1,32 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: input
+    id: cad
+    attributes:
+      label: CAD product and version
+      placeholder: AutoCAD 2025, BricsCAD V24, ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: PolylineTools version
+      description: Shown when the file is loaded, e.g. 2.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: command
+    attributes:
+      label: Command
+      options: [PL2CURVE, SMOOTHPL, FITCURVE, JOINPL, AUTOJOINPL, SETTOL, NUMBER, PLXHELP, PLXLANG, Loading the file]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened and what did you expect?
+      description: Paste the command-line text. A small DWG that reproduces the problem helps a lot.
+    validations:
+      required: true
